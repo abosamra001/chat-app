@@ -4,7 +4,6 @@ import 'package:chat_app/firebase_options.dart';
 import '/screens/login_screen.dart';
 import '/screens/signup_screen.dart';
 import '/screens/chat_screen.dart';
-// import './screens/signup_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,11 +20,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(),
       routes: {
         'LoginPage': (context) => LoginPage(),
         'SignUpPage': (context) => SignUpPage(),
-        'ChatPage': (context) => const ChatPage(),
+        'ChatPage': (context) => ChatPage(),
       },
       initialRoute: 'LoginPage',
     );

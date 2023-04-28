@@ -3,17 +3,20 @@ import 'package:google_fonts/google_fonts.dart';
 
 class CustomTextField extends StatelessWidget {
   CustomTextField({
-    required this.onChanged,
-    required this.label,
-    required this.prefixIcon,
+    this.onChanged,
+    this.label,
+    this.prefixIcon,
+    this.suffixIcon,
     this.keyboardType,
     this.obscureText = false,
     super.key,
   });
-  final String label;
-  final Icon prefixIcon;
+  final String? label;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
   TextInputType? keyboardType;
   bool obscureText;
+
   Function(String)? onChanged;
   @override
   Widget build(BuildContext context) {
@@ -38,6 +41,7 @@ class CustomTextField extends StatelessWidget {
         hintText: label,
         hintStyle: GoogleFonts.lato(fontSize: 14, color: Colors.grey[700]),
         prefixIcon: prefixIcon,
+        suffixIcon: suffixIcon,
         prefixIconColor: Colors.grey[700],
         contentPadding: const EdgeInsets.all(15),
       ),

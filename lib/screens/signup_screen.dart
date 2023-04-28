@@ -19,13 +19,31 @@ class _SignUpPageState extends State<SignUpPage> {
   Future<void> registerUser() async {
     showDialog(
       context: context,
-      builder: (context) => Center(child: CircularProgressIndicator()),
+      builder: (context) => const Center(child: CircularProgressIndicator()),
     );
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: _email!,
-      password: _password!,
-    );
-    Navigator.of(context).pop();
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _email!,
+        password: _password!,
+      );
+      Navigator.of(context).pop();
+      Navigator.pushNamed(context, 'ChatPage', arguments: _email);
+    } on FirebaseAuthException catch (e) {
+      String? exText;
+      switch (e.code) {
+        case 'email-already-in-use':
+          exText = 'Try another email this one is already in use';
+          break;
+        case 'invalid-email':
+          exText = 'The email is invalid try another one';
+          break;
+        case 'weak-password':
+          exText = 'the password is too short must be 6 digits';
+          break;
+      }
+      Navigator.of(context).pop();
+      showSnackBar(context, exText!);
+    }
   }
 
   void showSnackBar(context, String exText) {
@@ -103,27 +121,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     CustomButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          try {
-                            await registerUser();
-                            Navigator.pushNamed(context, 'ChatPage');
-                          } on FirebaseAuthException catch (e) {
-                            String? exText;
-                            switch (e.code) {
-                              case 'email-already-in-use':
-                                exText =
-                                    'Try another email this one is already in use';
-                                break;
-                              case 'invalid-email':
-                                exText = 'The email is invalid try another one';
-                                break;
-                              case 'weak-password':
-                                exText =
-                                    'the password is too short must be 6 digits';
-                                break;
-                            }
-
-                            showSnackBar(context, exText!);
-                          }
+                          await registerUser();
                         }
                       },
                       childText: 'Sign Up',

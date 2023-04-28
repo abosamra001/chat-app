@@ -19,15 +19,22 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> logIn() async {
     showDialog(
       context: context,
-      builder: (context) => Center(
+      builder: (context) => const Center(
         child: CircularProgressIndicator(),
       ),
     );
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: _email!,
-      password: _password!,
-    );
-    Navigator.of(context).pop();
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _email!,
+        password: _password!,
+      );
+      Navigator.of(context).pop();
+      Navigator.pushNamed(context, 'ChatPage', arguments: _email)
+          .then((_) => FirebaseAuth.instance.signOut());
+    } on FirebaseAuthException catch (e) {
+      Navigator.of(context).pop();
+      showSnackBar(context, e.code);
+    }
   }
 
   void showSnackBar(context, String exText) {
@@ -103,13 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                     CustomButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          try {
-                            await logIn();
-                            Navigator.pushNamed(context, 'ChatPage')
-                                .then((_) => FirebaseAuth.instance.signOut());
-                          } on FirebaseAuthException catch (e) {
-                            showSnackBar(context, e.code);
-                          }
+                          await logIn();
                         }
                       },
                       childText: 'Sign in',
